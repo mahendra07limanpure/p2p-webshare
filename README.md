@@ -169,6 +169,6 @@ The Vite development server will spin up on `http://localhost:5173`. Open this U
 
 ## 🔗 Deployments
 
-* **Deployed Frontend (Vercel):** *[Insert Deployed Client URL here]*
-* **Deployed Backend (Render):** *[Insert Deployed Server URL here]*
+* **Deployed Frontend (Vercel):** *https://p2p-webshare-git-master-mahendra-limanpures-projects.vercel.app/*
+* **Deployed Backend (Render):** *https://p2p-signaling-server.onrender.com*
 * **Demo Video Link:** *https://drive.google.com/file/d/1C8oHAoI5Z72Lan_9Pis-1iJkCpOljqhU/view?usp=sharing*
