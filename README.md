@@ -171,4 +171,4 @@ The Vite development server will spin up on `http://localhost:5173`. Open this U
 
 * **Deployed Frontend (Vercel):** *[Insert Deployed Client URL here]*
 * **Deployed Backend (Render):** *[Insert Deployed Server URL here]*
-* **Demo Video Link:** *[Insert Walkthrough Video URL here]*
+* **Demo Video Link:** *https://drive.google.com/file/d/1C8oHAoI5Z72Lan_9Pis-1iJkCpOljqhU/view?usp=sharing*
