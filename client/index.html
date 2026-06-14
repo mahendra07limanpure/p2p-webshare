@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Beam · P2P File Share</title>
+    <meta name="description" content="Direct browser-to-browser file sharing via WebRTC. No uploads, no cloud." />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            fontFamily: {
+              display: ['"Space Grotesk"', 'sans-serif'],
+              sans: ['Inter', 'sans-serif'],
+              mono: ['"JetBrains Mono"', 'monospace'],
+            },
+          },
+        },
+      };
+    </script>
+
+    <!-- Dark mode init (avoid flash of wrong theme) -->
+    <script>
+      (function () {
+        const stored = localStorage.getItem('beam-theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const isDark = stored ? stored === 'dark' : prefersDark;
+        if (isDark) document.documentElement.classList.add('dark');
+      })();
+    </script>
+
+    <style>
+      :root {
+        --glass-bg: rgba(255, 255, 255, 0.06);
+        --glass-border: rgba(255, 255, 255, 0.14);
+        --beam-cyan: #67e8f9;
+        --beam-violet: #c084fc;
+      }
+      .light {
+        --glass-bg: rgba(255, 255, 255, 0.55);
+        --glass-border: rgba(15, 23, 42, 0.08);
+      }
+
+      html,
+      body,
+      #root {
+        height: 100%;
+      }
+
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: #07061a;
+        color: #f8fafc;
+        transition: background-color 0.4s ease, color 0.4s ease;
+        overflow-x: hidden;
+      }
+
+      html.dark body {
+        background-color: #07061a;
+        color: #f8fafc;
+      }
+
+      html:not(.dark) body {
+        background-color: #f1f5f9;
+        color: #0f172a;
+      }
+
+      /* Aurora background */
+      .aurora {
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        overflow: hidden;
+        pointer-events: none;
+      }
+      .aurora span {
+        position: absolute;
+        border-radius: 9999px;
+        filter: blur(110px);
+        opacity: 0.55;
+        will-change: transform;
+      }
+      html.dark .aurora span.a1 {
+        background: #6d28d9;
+        width: 38vw;
+        height: 38vw;
+        top: -10%;
+        left: -8%;
+        animation: float1 26s ease-in-out infinite;
+      }
+      html.dark .aurora span.a2 {
+        background: #0891b2;
+        width: 42vw;
+        height: 42vw;
+        bottom: -15%;
+        right: -10%;
+        animation: float2 30s ease-in-out infinite;
+      }
+      html.dark .aurora span.a3 {
+        background: #be185d;
+        width: 28vw;
+        height: 28vw;
+        top: 35%;
+        right: 20%;
+        opacity: 0.28;
+        animation: float3 34s ease-in-out infinite;
+      }
+      html:not(.dark) .aurora span.a1 {
+        background: #a5b4fc;
+        width: 38vw;
+        height: 38vw;
+        top: -10%;
+        left: -8%;
+        opacity: 0.5;
+        animation: float1 26s ease-in-out infinite;
+      }
+      html:not(.dark) .aurora span.a2 {
+        background: #99f6e4;
+        width: 42vw;
+        height: 42vw;
+        bottom: -15%;
+        right: -10%;
+        opacity: 0.55;
+        animation: float2 30s ease-in-out infinite;
+      }
+      html:not(.dark) .aurora span.a3 {
+        background: #fbcfe8;
+        width: 28vw;
+        height: 28vw;
+        top: 35%;
+        right: 20%;
+        opacity: 0.4;
+        animation: float3 34s ease-in-out infinite;
+      }
+
+      @keyframes float1 {
+        0%, 100% { transform: translate(0, 0) scale(1); }
+        50% { transform: translate(8vw, 10vh) scale(1.12); }
+      }
+      @keyframes float2 {
+        0%, 100% { transform: translate(0, 0) scale(1); }
+        50% { transform: translate(-6vw, -8vh) scale(1.08); }
+      }
+      @keyframes float3 {
+        0%, 100% { transform: translate(0, 0) scale(1); }
+        50% { transform: translate(-10vw, 6vh) scale(1.15); }
+      }
+
+      .glass {
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+      }
+
+      .text-gradient {
+        background: linear-gradient(135deg, var(--beam-cyan), var(--beam-violet));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      /* Beam connector animations used on the home screen */
+      .beam-dot-h {
+        animation: travelX 3.2s linear infinite;
+      }
+      @keyframes travelX {
+        0% { left: 0%; opacity: 0; transform: translate(-50%, -50%); }
+        8% { opacity: 1; }
+        92% { opacity: 1; }
+        100% { left: 100%; opacity: 0; transform: translate(-50%, -50%); }
+      }
+      .beam-dot-v {
+        animation: travelY 3.2s linear infinite;
+      }
+      @keyframes travelY {
+        0% { top: 0%; opacity: 0; transform: translate(-50%, -50%); }
+        8% { opacity: 1; }
+        92% { opacity: 1; }
+        100% { top: 100%; opacity: 0; transform: translate(-50%, -50%); }
+      }
+
+      /* Reduced motion */
+      @media (prefers-reduced-motion: reduce) {
+        .aurora span, .beam-dot-h, .beam-dot-v {
+          animation: none !important;
+        }
+      }
+
+      ::selection {
+        background: var(--beam-violet);
+        color: #0f0a1a;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="aurora" aria-hidden="true">
+      <span class="a1"></span>
+      <span class="a2"></span>
+      <span class="a3"></span>
+    </div>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
